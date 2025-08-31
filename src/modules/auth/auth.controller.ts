@@ -1,34 +1,47 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ForbiddenException, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { UserRole } from './schemas/user.schema';
+import { AuthGuard } from '@nestjs/passport'
+import { UseGuards } from '@nestjs/common';
 
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+
+  // Register a new admin user (only if the requester is an admin)
+  @UseGuards(AuthGuard('jwt'))
+  @Post('registerAdmin')
+  registerAdmin(@Body() body: { email: string; password: string }, @Request() req) {
+    const user = req.user;
+    if (user.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('Only admins can register new admin users');
+    }
+    return this.authService.createUserAsAdmin(body.email, body.password, UserRole.ADMIN);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @Post('registerUser')
+  registerUser(@Body() body: { email: string; password: string }) {
+    return this.authService.createUserAsRegular(body.email, body.password);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
+  // Change user role but only if the user is an admin
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('changeRole/:id')
+  changeRole(@Param('id') userId: string, @Body() body: { role: UserRole }) {
+    return this.authService.changeUserRole(userId, body.role);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
+
+  @Get('users')
+  findAllUsers() {
+    return this.authService.getAllUsers();
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Get('user/:id')
+  findUserById(@Param('id') userId: string) {
+    return this.authService.getUserById(userId);
   }
+
 }
+

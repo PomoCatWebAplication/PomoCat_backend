@@ -1,8 +1,13 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './modules/auth/auth.module';
-import { TasksModule } from './modules/tasks/tasks.module';
 
 @Module({
-  imports: [AuthModule, TasksModule],
+  imports: [
+    MongooseModule.forRoot('mongodb://localhost:27017/pomocatdb'),
+    AuthModule,
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

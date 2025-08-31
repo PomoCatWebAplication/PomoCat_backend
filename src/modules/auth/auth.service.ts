@@ -1,26 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { User, UserRole } from './schemas/user.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+    constructor(
+        @InjectModel(User.name) private userModel: Model<User>
+    ) {}
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    createUserAsAdmin(email: string, password: string, role: UserRole) {
+        const newUser = new this.userModel({ email, password, role });
+        return newUser.save();
+    }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    createUserAsRegular(email: string, password: string) {
+        const newUser = new this.userModel({ email, password, role: UserRole.USER });
+        return newUser.save();
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
-  }
+    changeUserRole(userId: string, newRole: UserRole) {
+        return this.userModel.findByIdAndUpdate(userId, { role: newRole }, { new: true });
+    }
+
+    getAllUsers() {
+        return this.userModel.find().exec();
+    }
+
+    getUserById(userId: string) {
+        return this.userModel.findById(userId).exec();
+    }
 }

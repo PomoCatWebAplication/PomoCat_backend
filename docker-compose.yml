@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: pomocat_mongo
+    ports:
+      - "27017:27017"   # expone Mongo a tu máquina
+    volumes:
+      - mongo_data:/data/db
+    # sin usuarios ni auth (modo dev, ultra simple)
+
+volumes:
+  mongo_data:

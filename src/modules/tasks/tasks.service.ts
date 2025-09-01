@@ -15,19 +15,19 @@ export class TasksService {
     return createdTask.save();
   }
 
-  findAll() {
-    return this.taskModel.find().exec();
+  findAll(userId: string) {
+    return this.taskModel.find({ userId }).exec();
   }
 
-  findOne(id: number) {
-    return this.taskModel.findById(id).exec();
+  findOne(id: string) {
+    return this.taskModel.findOne({ _id: id}).exec();
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return this.taskModel.findByIdAndUpdate(id, updateTaskDto, { new: true }).exec();
+  update(id: string, updateTaskDto: UpdateTaskDto) {
+    return this.taskModel.findOneAndUpdate({ _id: id}, updateTaskDto, { new: true }).exec();
   }
 
-  remove(id: number) {
-    return this.taskModel.findByIdAndDelete(id).exec();
+  remove(id: string) {
+    return this.taskModel.findOneAndDelete({ _id: id}).exec();
   }
 }

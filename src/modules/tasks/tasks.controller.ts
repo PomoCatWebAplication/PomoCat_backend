@@ -7,28 +7,32 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
-  @Post(':id')
-  create(@Body() createTaskDto: CreateTaskDto, @Param('id') userId: string) {
+  @Post(':userId')
+  create(@Body() createTaskDto: CreateTaskDto, @Param('userId') userId: string) {
     return this.tasksService.create(createTaskDto, userId);
   }
 
-  @Get()
-  findAll() {
-    return this.tasksService.findAll();
+  // Obtener todas las tareas de un usuario
+  @Get('user/:userId')
+  findAll(@Param('userId') userId: string) {
+    return this.tasksService.findAll(userId);
   }
 
+  // Obtener una tarea específica
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.tasksService.findOne(+id);
+    return this.tasksService.findOne(id);
   }
 
+  // Actualizar una tarea específica
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.tasksService.update(+id, updateTaskDto);
+    return this.tasksService.update(id, updateTaskDto);
   }
 
+  // Eliminar una tarea específica
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.tasksService.remove(+id);
+    return this.tasksService.remove(id);
   }
 }

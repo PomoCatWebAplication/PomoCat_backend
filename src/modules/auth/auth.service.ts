@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserRole } from './schemas/user.schema';
 import { Model } from 'mongoose';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
 
     constructor(
-        @InjectModel(User.name) private userModel: Model<User>
+        @InjectModel(User.name) private userModel: Model<User>,
+        private jwtService: JwtService
     ) {}
 
     createUserAsAdmin(email: string, password: string, role: UserRole) {
@@ -30,5 +32,15 @@ export class AuthService {
 
     getUserById(userId: string) {
         return this.userModel.findById(userId).exec();
+    }
+
+    async login(email: string, password: string) {
+        const user = await this.userModel.findOne({ email, password }).exec();
+        if (!user) {
+            throw new UnauthorizedException('Invalid email or password');
+        }
+        const payload = { email: user.email, sub: user._id };
+        const token = this.jwtService.sign(payload);
+        return { user, access_token: token };
     }
 }

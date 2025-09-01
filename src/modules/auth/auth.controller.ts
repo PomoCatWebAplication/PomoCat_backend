@@ -7,7 +7,7 @@ import { UseGuards } from '@nestjs/common';
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
+ 
   // Register a new admin user (only if the requester is an admin)
   @UseGuards(AuthGuard('jwt'))
   @Post('registerAdmin')
@@ -19,12 +19,13 @@ export class AuthController {
     return this.authService.createUserAsAdmin(body.email, body.password, UserRole.ADMIN);
   }
 
-/*
+ /*
   @Post('registerAdmin')
   registerAdmin(@Body() body: { email: string; password: string }) {
     return this.authService.createUserAsAdmin(body.email, body.password, UserRole.ADMIN);
   }
-*/
+  */
+
 
   @Post('registerUser')
   registerUser(@Body() body: { email: string; password: string }) {

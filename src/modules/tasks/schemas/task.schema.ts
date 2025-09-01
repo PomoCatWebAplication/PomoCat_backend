@@ -1,6 +1,7 @@
-import { Prop, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { TaskState } from "../dto/create-task.dto";
 
+@Schema({timestamps: true})
 export class Task {
 
     @Prop({ required: true })
@@ -15,7 +16,7 @@ export class Task {
     @Prop({ enum: TaskState, default: TaskState.TODO })
     state: TaskState;
 
-    @Prop()
+    @Prop({required: true})
     userId: string;
 
 }

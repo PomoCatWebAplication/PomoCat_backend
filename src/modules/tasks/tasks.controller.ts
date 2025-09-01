@@ -12,8 +12,14 @@ export class TasksController {
     return this.tasksService.create(createTaskDto, userId);
   }
 
+  // Obtener las tareas de todos los usuarios
+  @Get()
+  findAllTasks() {
+    return this.tasksService.findAllTasks();
+  }
+
   // Obtener todas las tareas de un usuario
-  @Get('user/:userId')
+  @Get(':userId')
   findAll(@Param('userId') userId: string) {
     return this.tasksService.findAll(userId);
   }

@@ -5,7 +5,7 @@ import { TasksModule } from './modules/tasks/tasks.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/pomocatdb'),
+    MongooseModule.forRoot('mongodb+srv://yurayt18_db_user:C8pVC4cNrqYUotGX@pomocatdb.eivsfs9.mongodb.net/?retryWrites=true&w=majority&appName=PomoCatDb'),
     AuthModule,
     TasksModule,
   ],

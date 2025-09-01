@@ -1,4 +1,4 @@
-import {IsNotEmpty} from 'class-validator';
+import {IsDateString, IsEnum, IsNotEmpty, IsOptional} from 'class-validator';
 
 export enum TaskState {
     TODO = 'TODO',
@@ -11,10 +11,15 @@ export class CreateTaskDto {
     @IsNotEmpty()
     title: string;
 
+    @IsOptional()
     description: string;
 
+    @IsDateString()
+    @IsOptional()
     dueDate: Date;
 
+    @IsOptional()
+    @IsEnum(TaskState)
     state: TaskState;
 
 }

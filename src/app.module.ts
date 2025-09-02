@@ -3,6 +3,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './modules/auth/auth.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import {ConfigModule, ConfigService} from '@nestjs/config';
+import { DailyPlansModule } from './modules/daily-plans/daily-plans.module';
+import { ShopModule } from './modules/shop/shop.module';
+import { ItemsModule } from './modules/items/items.module';
+import { PomodoroModule } from './modules/pomodoro/pomodoro.module';
+import { PetModule } from './modules/pet/pet.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -17,6 +23,12 @@ import {ConfigModule, ConfigService} from '@nestjs/config';
     }),
     AuthModule,
     TasksModule,
+    DailyPlansModule,
+    ShopModule,
+    ItemsModule,
+    PomodoroModule,
+    PetModule,
+    NotificationModule,
   ],
   controllers: [],
   providers: [],

@@ -11,6 +11,7 @@ import {ConfigModule, ConfigService} from '@nestjs/config';
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => ({
         uri: cfg.get('MONGODB_URI'),
+        dbName: 'PomoCatDb',
         serverSelectionTimeoutMS: 5000,
       }),
     }),

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTaskDto } from './dto/create-task.dto';
+import { CreateTaskDto, TaskState } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -30,6 +30,10 @@ export class TasksService {
 
   update(id: string, updateTaskDto: UpdateTaskDto) {
     return this.taskModel.findOneAndUpdate({ _id: id}, updateTaskDto, { new: true }).exec();
+  }
+
+  completeTask(id: string) {
+    return this.taskModel.findOneAndUpdate({ _id: id }, { state: TaskState.COMPLETED }, { new: true }).exec();
   }
 
   remove(id: string) {

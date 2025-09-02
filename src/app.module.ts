@@ -2,10 +2,18 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './modules/auth/auth.module';
 import { TasksModule } from './modules/tasks/tasks.module';
+import {ConfigModule, ConfigService} from '@nestjs/config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://yurayt18_db_user:C8pVC4cNrqYUotGX@pomocatdb.eivsfs9.mongodb.net/?retryWrites=true&w=majority&appName=PomoCatDb'),
+    ConfigModule.forRoot({isGlobal: true,}),
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (cfg: ConfigService) => ({
+        uri: cfg.get('MONGODB_URI'),
+        serverSelectionTimeoutMS: 5000,
+      }),
+    }),
     AuthModule,
     TasksModule,
   ],

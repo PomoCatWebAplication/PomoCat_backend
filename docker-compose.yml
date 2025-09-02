@@ -1,14 +1,18 @@
-version: '3.9'
-
+# docker-compose.yml
 services:
-  mongodb:
-    image: mongo:7
-    container_name: pomocat_mongo
+  app:
+    build: .
+    container_name: pomocat_api
+    env_file:
+      - .env
+    environment:
+      - PORT=${PORT}
+      - MONGODB_URI=${MONGODB_URI}
     ports:
-      - "27017:27017"   # expone Mongo a tu máquina
-    volumes:
-      - mongo_data:/data/db
-    # sin usuarios ni auth (modo dev, ultra simple)
-
-volumes:
-  mongo_data:
+      - "3000:3000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 20s
+      timeout: 5s
+      retries: 5

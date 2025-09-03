@@ -1,4 +1,4 @@
-import {IsDateString, IsEnum, IsNotEmpty, IsOptional} from 'class-validator';
+import {IsDateString, IsEnum, IsNotEmpty, IsOptional, IsString, IsNumber} from 'class-validator';
 
 export enum TaskState {
     TODO = 'TODO',
@@ -21,5 +21,17 @@ export class CreateTaskDto {
     @IsOptional()
     @IsEnum(TaskState)
     state: TaskState;
+
+    @IsOptional()
+    @IsString()
+    notifyLocalTime?: string; // formato "HH:mm"
+
+    @IsOptional()
+    @IsNumber()
+    dailyMinutes?: number;
+
+    @IsOptional()
+    @IsString()
+    timezone?: string; // ej: "America/Bogota"
 
 }

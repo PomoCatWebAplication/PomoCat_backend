@@ -19,6 +19,16 @@ export class Task {
     @Prop({required: true})
     userId: string;
 
+    @Prop()
+    notifyLocalTime?: string; // hora en la que avisar
+
+    @Prop()
+    dailyMinutes?: number;    // minutos planificados en el día
+
+    @Prop()
+    timezone?: string;        // se tiene en cuenta la timezone para poder realizar la contabilidad de las horas
+
+
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);

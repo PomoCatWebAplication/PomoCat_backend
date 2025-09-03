@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { TaskState } from "../dto/create-task.dto";
+import { Document } from "mongoose";
 import { HydratedDocument, Types } from "mongoose";
 
 export type TaskDocument = HydratedDocument<Task>;

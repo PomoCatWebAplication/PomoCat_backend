@@ -7,28 +7,33 @@ import { UpdateSettingDto } from './dto/update-setting.dto';
 export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
 
-  @Post()
-  create(@Body() createSettingDto: CreateSettingDto) {
-    return this.settingsService.create(createSettingDto);
+  @Post(':user/:userId')
+  create(@Body() createSettingDto: CreateSettingDto, @Param('userId') userId: string) {
+    return this.settingsService.create(createSettingDto, userId);
   }
 
   @Get()
-  findAll() {
-    return this.settingsService.findAll();
+  findAllSettings() {
+    return this.settingsService.findAllSettings();
   }
 
-  @Get(':id')
+  @Get('user/:userId')
+  findAll(@Param('userId') userId: string) {
+    return this.settingsService.findAll(userId);
+  }
+
+  @Get('id/:id')
   findOne(@Param('id') id: string) {
-    return this.settingsService.findOne(+id);
+    return this.settingsService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch('id/:id')
   update(@Param('id') id: string, @Body() updateSettingDto: UpdateSettingDto) {
-    return this.settingsService.update(+id, updateSettingDto);
+    return this.settingsService.update(id, updateSettingDto);
   }
 
-  @Delete(':id')
+  @Delete('id/:id')
   remove(@Param('id') id: string) {
-    return this.settingsService.remove(+id);
+    return this.settingsService.remove(id);
   }
 }

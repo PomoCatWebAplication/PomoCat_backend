@@ -1,9 +1,9 @@
-import {IsDateString, IsEnum, IsNotEmpty, IsOptional, IsString, IsNumber} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional} from 'class-validator';
+import {IsDateString, IsString, IsNumber} from 'class-validator';
 
 export enum TaskState {
-    TODO = 'TODO',
-    IN_PROGRESS = 'IN_PROGRESS',
-    DONE = 'DONE',
+    COMPLETED="COMPLETED",
+    PENDING="PENDING",
 }
 
 export class CreateTaskDto {
@@ -13,10 +13,6 @@ export class CreateTaskDto {
 
     @IsOptional()
     description: string;
-
-    @IsDateString()
-    @IsOptional()
-    dueDate: Date;
 
     @IsOptional()
     @IsEnum(TaskState)

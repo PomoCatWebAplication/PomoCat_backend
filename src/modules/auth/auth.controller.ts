@@ -1,35 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ForbiddenException, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ForbiddenException, Request, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserRole } from './schemas/user.schema';
 import { AuthGuard } from '@nestjs/passport'
 import { UseGuards } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 
-@Controller()
+@Controller('jwt')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
  
   // Register a new admin user (only if the requester is an admin)
+  @HttpCode(HttpStatus.CREATED)
   @UseGuards(AuthGuard('jwt'))
   @Post('registerAdmin')
-  registerAdmin(@Body() body: { email: string; password: string }, @Request() req) {
+  registerAdmin(@Body() body: CreateUserDto, @Request() req) {
     const user = req.user;
     if (user.role !== UserRole.ADMIN) {
       throw new ForbiddenException('Only admins can register new admin users');
     }
-    return this.authService.createUserAsAdmin(body.email, body.password, UserRole.ADMIN);
+    return this.authService.createUserAsAdmin(body);
   }
 
  /*
   @Post('registerAdmin')
-  registerAdmin(@Body() body: { email: string; password: string }) {
-    return this.authService.createUserAsAdmin(body.email, body.password, UserRole.ADMIN);
+  registerAdmin(@Body() body: CreateUserDto) {
+    return this.authService.createUserAsAdmin(body);
   }
   */
 
-
+  @HttpCode(HttpStatus.CREATED)
   @Post('registerUser')
-  registerUser(@Body() body: { email: string; password: string }) {
-    return this.authService.createUserAsRegular(body.email, body.password);
+  registerUser(@Body() body: CreateUserDto) {
+    return this.authService.createUserAsRegular(body);
   }
 
   // Change user role but only if the user is an admin
@@ -50,9 +53,10 @@ export class AuthController {
     return this.authService.getUserById(userId);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() body: { email: string; password: string }) {
-    return this.authService.login(body.email, body.password);
+  login(@Body() body: LoginUserDto) {
+    return this.authService.login(body);
   }
 
 }

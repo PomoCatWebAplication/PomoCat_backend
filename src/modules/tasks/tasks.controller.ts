@@ -36,6 +36,11 @@ export class TasksController {
     return this.tasksService.update(id, updateTaskDto);
   }
 
+  @Post('completed/:id')
+  complete(@Param('id') id: string) {
+    return this.tasksService.completeTask(id);
+  }
+
   // Eliminar una tarea específica
   @Delete(':id')
   remove(@Param('id') id: string) {

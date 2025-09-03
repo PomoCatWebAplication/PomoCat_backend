@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { TaskState } from "../dto/create-task.dto";
+import { Types } from "mongoose";
 
 @Schema({timestamps: true})
 export class Task {
@@ -10,13 +11,10 @@ export class Task {
     @Prop()
     description: string;
 
-    @Prop()
-    dueDate: Date;
-
-    @Prop({ enum: TaskState, default: TaskState.TODO })
+    @Prop({ enum: TaskState, default: TaskState.PENDING })
     state: TaskState;
 
-    @Prop({required: true})
+    @Prop({type: Types.ObjectId, ref: 'User', required: true})
     userId: string;
 
     @Prop()

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { TaskState } from "../dto/create-task.dto";
-import { Types } from "mongoose";
+import { Types, Document } from "mongoose";
 
 @Schema({timestamps: true})
 export class Task extends Document {

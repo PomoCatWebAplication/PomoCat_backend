@@ -1,9 +1,11 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { TaskState } from "../dto/create-task.dto";
-import { Types } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
+
+export type TaskDocument = HydratedDocument<Task>;
 
 @Schema({timestamps: true})
-export class Task extends Document {
+export class Task {
 
     @Prop({ required: true })
     title: string;

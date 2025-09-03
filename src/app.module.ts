@@ -9,6 +9,7 @@ import { ItemsModule } from './modules/items/items.module';
 import { PomodoroModule } from './modules/pomodoro/pomodoro.module';
 import { PetModule } from './modules/pet/pet.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { InventoryModule } from './modules/inventory/inventory.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { NotificationModule } from './modules/notification/notification.module';
     PomodoroModule,
     PetModule,
     NotificationModule,
+    InventoryModule,
   ],
   controllers: [],
   providers: [],

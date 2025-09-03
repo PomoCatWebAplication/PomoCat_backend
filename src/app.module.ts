@@ -10,7 +10,7 @@ import { PomodoroModule } from './modules/pomodoro/pomodoro.module';
 import { PetModule } from './modules/pet/pet.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { ScheduleModule } from '@nestjs/schedule';
-
+import { InventoryModule } from './modules/inventory/inventory.module';
 
 @Module({
   imports: [
@@ -33,6 +33,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     NotificationModule,
     ScheduleModule.forRoot(),
     TasksModule,
+    InventoryModule,
   ],
   controllers: [],
   providers: [],

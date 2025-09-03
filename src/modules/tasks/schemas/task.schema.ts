@@ -3,7 +3,7 @@ import { TaskState } from "../dto/create-task.dto";
 import { Types } from "mongoose";
 
 @Schema({timestamps: true})
-export class Task {
+export class Task extends Document {
 
     @Prop({ required: true })
     title: string;
@@ -26,6 +26,8 @@ export class Task {
     @Prop()
     timezone?: string;        // se tiene en cuenta la timezone para poder realizar la contabilidad de las horas
 
+    @Prop({ type: Date, required: false })
+    dueDate?: Date;           // fecha límite para completar la tarea
 
 }
 

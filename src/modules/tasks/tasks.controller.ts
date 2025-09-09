@@ -36,9 +36,9 @@ export class TasksController {
     return this.tasksService.update(id, updateTaskDto);
   }
 
-  @Post('completed/:id')
-  complete(@Param('id') id: string) {
-    return this.tasksService.completeTask(id);
+  @Post('completed/:userId/:id')
+  complete(@Param('id') id: string, @Param('userId') userId: string) {
+    return this.tasksService.completeTask(id, userId);
   }
 
   // Eliminar una tarea específica
@@ -46,4 +46,10 @@ export class TasksController {
   remove(@Param('id') id: string) {
     return this.tasksService.remove(id);
   }
+
+  @Get(':userId/reminders')
+  async getReminders(@Param('userId') userId: string) {
+    return this.tasksService.getReminders(userId);
+}
+
 }

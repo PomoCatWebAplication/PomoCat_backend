@@ -1,34 +1,25 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ShopService } from './shop.service';
-import { CreateShopDto } from './dto/create-shop.dto';
-import { UpdateShopDto } from './dto/update-shop.dto';
+import { InventoryService } from '../inventory/inventory.service';
+import { CreateInventoryDto } from '../inventory/dto/create-inventory.dto';
+
 
 @Controller('shop')
 export class ShopController {
-  constructor(private readonly shopService: ShopService) {}
+  constructor(private readonly inventoryService: InventoryService) {}
 
-  @Post()
-  create(@Body() createShopDto: CreateShopDto) {
-    return this.shopService.create(createShopDto);
+  @Post('purchase')
+  purchaseItem(@Body() dto: CreateInventoryDto) {
+    return this.inventoryService.create(dto);
   }
 
-  @Get()
-  findAll() {
-    return this.shopService.findAll();
+  @Get('items')
+  findAllItems() {
+    return this.inventoryService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.shopService.findOne(+id);
+  @Get('items/:id')
+  findOneItem(@Param('id') id: string) {
+    return this.inventoryService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateShopDto: UpdateShopDto) {
-    return this.shopService.update(+id, updateShopDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.shopService.remove(+id);
-  }
 }

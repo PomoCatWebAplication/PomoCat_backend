@@ -1,17 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { PetService } from './pet.service';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('pet')
 export class PetController {
   constructor(private readonly petService: PetService) {}
 
-  @Post()
-  create(@Body() createPetDto: CreatePetDto) {
-    return this.petService.create(createPetDto);
+  @Post('new/:userId')
+  create(@Body() createPetDto: CreatePetDto, @Param('userId') userId: string) {
+    return this.petService.create(createPetDto, userId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   findAll() {
     return this.petService.findAll();
@@ -19,16 +21,18 @@ export class PetController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.petService.findOne(+id);
+    return this.petService.findOne(id);
   }
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePetDto: UpdatePetDto) {
-    return this.petService.update(+id, updatePetDto);
+    return this.petService.update(id, updatePetDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.petService.remove(+id);
+    return this.petService.remove(id);
   }
 }

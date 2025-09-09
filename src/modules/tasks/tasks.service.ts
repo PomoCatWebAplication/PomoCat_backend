@@ -42,7 +42,7 @@ export class TasksService {
     return this.taskModel.findOneAndDelete({ _id: id}).exec();
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async checkReminders() {
     const ahora = new Date();
     const En5Min = new Date(ahora.getTime()+ 5 * 60* 1000);

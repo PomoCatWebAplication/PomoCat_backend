@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty, IsString } from "class-validator/types/decorator/decorators";
+import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 
 
 export class CreatePetDto {

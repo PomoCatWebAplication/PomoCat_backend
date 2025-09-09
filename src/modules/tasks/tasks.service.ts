@@ -42,13 +42,13 @@ export class TasksService {
     return this.taskModel.findOneAndDelete({ _id: id}).exec();
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
-  async checkReminders() {
+  @Cron(CronExpression.EVERY_30_MINUTES)
+  async checkReminders(taskId: string) {
     const ahora = new Date();
-    const En5Min = new Date(ahora.getTime()+ 5 * 60* 1000);
+    const En30Min = new Date(ahora.getTime()+ 30 * 60* 1000);
 
     const tasks = await this.taskModel.find({
-      dueDate: {$lte: En5Min, $gte: ahora}
+      dueDate: {$lte: En30Min, $gte: ahora}
     });
 
     tasks.forEach((Task)=> {

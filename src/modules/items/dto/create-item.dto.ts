@@ -4,7 +4,8 @@ export enum ItemType {
     HAT = 'HAT',
     SHIRT = 'SHIRT',
     ACCESORY = 'ACCESORY',
-    SKIN = "SKIN"
+    SKIN = "SKIN",
+    BACKGROUND = "BACKGROUND"
 }
 
 export enum quality {

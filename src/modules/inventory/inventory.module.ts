@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { InventoryService } from './inventory.service';
-import { InventoryController } from './inventory.controller';
+import { InventoryService } from './services/inventory.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Inventory, InventorySchema } from './schemas/inventory.schema';
+import { InventoryController } from './controllers/inventory.controller';
 
 @Module({
   imports: [

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { DailyPlansService } from './daily-plans.service';
-import { DailyPlansController } from './daily-plans.controller';
+import { DailyPlansService } from './services/daily-plans.service';
+import { DailyPlansController } from './controllers/daily-plans.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({

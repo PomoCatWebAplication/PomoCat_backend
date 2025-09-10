@@ -21,7 +21,7 @@ export class TasksController {
   // Obtener todas las tareas de un usuario
   @Get(':userId')
   findAll(@Param('userId') userId: string) {
-    return this.tasksService.findAll(userId);
+    return this.tasksService.findAllByUser(userId);
   }
 
   // Obtener una tarea específica
@@ -49,7 +49,7 @@ export class TasksController {
 
   @Get(':userId/reminders')
   async getReminders(@Param('userId') userId: string) {
-    return this.tasksService.getReminders(userId);
+    return this.tasksService.getRemindersForUser(userId);
 }
 
 }

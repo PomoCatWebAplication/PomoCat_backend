@@ -1,37 +1,32 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateItemDto } from '../dto/create-item.dto';
 import { UpdateItemDto } from '../dto/update-item.dto';
-import { Item } from '../schemas/item.schema';
+import { IItemsRepository } from '../repository/items.repository.interface';
 
 @Injectable()
 export class ItemsService {
+  constructor(@Inject(IItemsRepository) private readonly itemsRepository: IItemsRepository) {}
 
-  constructor(@InjectModel(Item.name) private itemModel: Model<Item>) {}
-
-  create(createItemDto: CreateItemDto) {
-    const createdItem = new this.itemModel(createItemDto);
-    return createdItem.save();
+  async create(createItemDto: CreateItemDto) {
+    return this.itemsRepository.create(createItemDto as any);
+  }
+  async findAll() {
+    return this.itemsRepository.findAll();
+  }
+  async findAllValid() {
+    return this.itemsRepository.findAllValid();
+  }
+  async findOne(id: string) {
+    return this.itemsRepository.findOne(id);
+  }
+  async update(id: string, updateItemDto: UpdateItemDto) {
+    return this.itemsRepository.update(id, updateItemDto as any);
+  }
+  async remove(id: string) {
+    return this.itemsRepository.remove(id);
   }
 
-  findAll() {
-    return this.itemModel.find().exec();
-  }
-
-  findAllValid() {
-    return this.itemModel.find({ isValid: true }).exec();
-  }
-
-  findOne(id: string) {
-    return this.itemModel.findById(id).exec();
-  }
-
-  update(id: string, updateItemDto: UpdateItemDto) {
-    return this.itemModel.findByIdAndUpdate(id, updateItemDto).exec();
-  }
-
-  remove(id: string) {
-    return this.itemModel.findByIdAndDelete(id).exec();
+  async getPrice(id: string): Promise<number | null> {
+    return this.itemsRepository.getPrice(id);
   }
 }

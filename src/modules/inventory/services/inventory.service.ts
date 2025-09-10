@@ -1,33 +1,37 @@
-import { Injectable } from '@nestjs/common';
+// src/modules/inventory/services/inventory.service.ts
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { IInventoryRepository } from '../repository/inventory.repository.interface';
 import { CreateInventoryDto } from '../dto/create-inventory.dto';
 import { UpdateInventoryDto } from '../dto/update-inventory.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Inventory, InventoryDocument } from '../schemas/inventory.schema';
 
 @Injectable()
 export class InventoryService {
+  constructor(
+    @Inject(IInventoryRepository)                  
+    private readonly repo: IInventoryRepository,   
+  ) {}
 
-  constructor(@InjectModel(Inventory.name) private inventoryModel: Model<InventoryDocument>) {}
-
-  create(createInventoryDto: CreateInventoryDto) {
-    const inventory = new this.inventoryModel(createInventoryDto);
-    return inventory.save();
+  create(dto: CreateInventoryDto) {
+    return this.repo.create(dto);
   }
 
-  findAll() {
-    return this.inventoryModel.find().exec();
+  findAll() { return this.repo.findAll(); }
+
+  async findOne(id: string) {
+    const doc = await this.repo.findOne(id);
+    if (!doc) throw new NotFoundException('Inventory not found');
+    return doc;
   }
 
-  findOne(id: string) {
-    return this.inventoryModel.findById(id).exec();
+  async update(id: string, dto: UpdateInventoryDto) {
+    const updated = await this.repo.update(id, dto);
+    if (!updated) throw new NotFoundException('Inventory not found');
+    return updated;
   }
 
-  update(id: string, updateInventoryDto: UpdateInventoryDto) {
-    return this.inventoryModel.findByIdAndUpdate(id, updateInventoryDto).exec();
-  }
-
-  remove(id: string) {
-    return this.inventoryModel.findByIdAndDelete(id).exec();
+  async remove(id: string) {
+    const deleted = await this.repo.remove(id);
+    if (!deleted) throw new NotFoundException('Inventory not found');
+    return { deleted: true };
   }
 }

@@ -1,36 +1,37 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { TaskState } from "../dto/create-task.dto";
-import { HydratedDocument, Types } from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+import { TaskState } from '../enums/task-state.enum';
+import { User } from 'src/modules/auth/schemas/user.schema';
 
 export type TaskDocument = HydratedDocument<Task>;
 
-@Schema({timestamps: true})
+@Schema({ timestamps: true, collection: 'tasks' })
 export class Task {
+  _id: Types.ObjectId;
 
-    @Prop({ required: true })
-    title: string;
+  @Prop({ required: true, trim: true })
+  title: string;
 
-    @Prop()
-    description: string;
+  @Prop({ trim: true })
+  description?: string;
 
-    @Prop({ enum: TaskState, default: TaskState.PENDING })
-    state: TaskState;
+  @Prop({ type: String, enum: TaskState, default: TaskState.PENDING })
+  state: TaskState;
 
-    @Prop({type: Types.ObjectId, ref: 'User', required: true})
-    userId: string;
+  @Prop({ type: Types.ObjectId, ref: User.name, required: true })
+  userId: Types.ObjectId;
 
-    @Prop()
-    notifyLocalTime?: string; // hora en la que avisar
+  @Prop()
+  notifyLocalTime?: string; // "HH:mm"
 
-    @Prop()
-    dailyMinutes?: number;    // minutos planificados en el día
+  @Prop({ type: Number, min: 0 })
+  dailyMinutes?: number;
 
-    @Prop()
-    timezone?: string;        // se tiene en cuenta la timezone para poder realizar la contabilidad de las horas
+  @Prop({ default: 'America/Bogota'})
+  timezone?: string;
 
-    @Prop({ type: Date, required: false })
-    dueDate?: Date;           // fecha límite para completar la tarea
-
+  @Prop({ type: Date })
+  dueDate?: Date;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);

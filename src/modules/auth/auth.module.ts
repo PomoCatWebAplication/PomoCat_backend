@@ -1,22 +1,31 @@
-import { Module } from '@nestjs/common';
-import { AuthController } from './controllers/auth.controller';
-import { JwtStrategy } from './jwt.strategy';
-import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './schemas/user.schema';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './services/auth.service';
-import { UsersController } from './users.controller';
+import { Module } from "@nestjs/common";
+import { MongooseModule } from "@nestjs/mongoose";
+import { JwtModule } from "@nestjs/jwt";
+import { User, UserSchema } from "./schemas/user.schema";
+import { AuthService } from "./services/auth.service";
+import { AuthRepository } from "./repository/Auth.repository";
+import { IAuthRepository } from "./repository/Auth.repository.interface";
+import { AuthController } from "./controllers/auth.controller";
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-  PassportModule,
-  JwtModule.register({
-    secret: process.env.JWT_SECRET || 'secretKey',
-    signOptions: { expiresIn: '1h' },
-  }),
+  imports: [
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || "secretKey",
+      signOptions: { expiresIn: "7d" },
+    }),
   ],
-  controllers: [AuthController, UsersController],
-  providers: [AuthService, JwtStrategy],
+  controllers: [
+    AuthController
+  ],
+  providers: [
+    AuthService,
+    { provide: IAuthRepository, useClass: AuthRepository },
+  ],
+  exports: [
+    AuthService,
+    { provide: IAuthRepository, useClass: AuthRepository },
+    MongooseModule,
+  ],
 })
 export class AuthModule {}

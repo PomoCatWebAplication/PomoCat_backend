@@ -1,34 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
+import { Types, isValidObjectId } from 'mongoose';
+import { PET_REPO, type IPetRepository } from '../repository/pet.repo.interface';
 import { CreatePetDto } from '../dto/create-pet.dto';
 import { UpdatePetDto } from '../dto/update-pet.dto';
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { petDocument } from '../schemas/pet.schema';
 import { Pet } from '../schemas/pet.schema';
 
 @Injectable()
 export class PetService {
+  constructor(@Inject(PET_REPO) private readonly repo: IPetRepository) {}
 
-  constructor(@InjectModel(Pet.name) private petModel: Model<petDocument>) {}
+  async create(dto: CreatePetDto, userId: string) {
+    if (!userId || !isValidObjectId(userId)) {
+      throw new BadRequestException('userId inválido');
+    }
 
-  create(createPetDto: CreatePetDto, userId: string) {
-    const newPet = new this.petModel({ ...createPetDto, userId });
-    return newPet.save();
+    const oid = (v?: string) => (v ? new Types.ObjectId(v) : undefined);
+
+    const payload: Partial<Pet> = {
+      name: dto.name,
+      hat: oid(dto.hat),
+      shirt: oid(dto.shirt),
+      accessory: oid(dto.accessory),
+      userId: new Types.ObjectId(userId),
+    };
+
+    return this.repo.create(payload, userId);
   }
 
-  findAll() {
-    return this.petModel.find().exec();
+  async update(id: string, dto: UpdatePetDto) {
+    const update: Partial<Pet> = {};
+    if (dto.name !== undefined) update.name = dto.name;
+    if (dto.hat !== undefined) update.hat = dto.hat ? new Types.ObjectId(dto.hat) : undefined;
+    if (dto.shirt !== undefined) update.shirt = dto.shirt ? new Types.ObjectId(dto.shirt) : undefined;
+    if (dto.accessory !== undefined) update.accessory = dto.accessory ? new Types.ObjectId(dto.accessory) : undefined;
+
+    return this.repo.update(id, update as any);
   }
 
-  findOne(id: string) {
-    return this.petModel.findById(id).exec();
+  async findAll() {
+    return this.repo.findAll();
   }
 
-  update(id: string, updatePetDto: UpdatePetDto) {
-    return this.petModel.findByIdAndUpdate(id, updatePetDto).exec();
+  async findOne(id: string) {
+    return this.repo.findById(id);
   }
 
-  remove(id: string) {
-    return this.petModel.findByIdAndDelete(id).exec();
+  async remove(id: string) {
+    return this.repo.delete(id);
   }
 }

@@ -5,7 +5,7 @@ export class CreatePomodoroDto {
 
     @IsNotEmpty()
     @IsNumber()
-    duration: number;
+    duration: number; // In minutes
 
     @IsNotEmpty()
     @IsNumber()

@@ -1,28 +1,28 @@
-import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
-
+import { IsMongoId, IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 export class CreatePetDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
-    @IsString()
-    @IsNotEmpty()
-    name: string;
+  @IsOptional()
+  @IsMongoId()
+  hat?: string;
 
-    @IsMongoId()
-    hat: string;
+  @IsOptional()
+  @IsMongoId()
+  shirt?: string;
 
-    @IsMongoId()
-    shirt: string;
+  @IsOptional()
+  @IsMongoId()
+  accessory?: string;
 
-    @IsMongoId()
-    accesory: string;
+  // Si algún día referenciaras skins/items como ObjectId, agrega aquí
+  // @IsOptional()
+  // @IsMongoId()
+  // skinItem?: string;
 
-    @IsMongoId()
-    skin: string;
-
-    @IsMongoId()
-    background: string;
-
+  // @IsOptional()
+  // @IsMongoId()
+  // backgroundItem?: string;
 }
-
-
-

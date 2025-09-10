@@ -7,9 +7,9 @@ import { PomodoroService } from '../services/pomodoro.service';
 export class PomodoroController {
   constructor(private readonly pomodoroService: PomodoroService) {}
 
-  @Post('create')
-  create(@Body() createPomodoroDto: CreatePomodoroDto) {
-    return this.pomodoroService.createPomodoroSession(createPomodoroDto);
+  @Post('create/:userId/:taskId')
+  create(@Body() createPomodoroDto: CreatePomodoroDto, @Param('userId') userId: string, @Param('taskId') taskId: string) {
+    return this.pomodoroService.create(createPomodoroDto, userId, taskId);
   }
 
   @Get('all')
@@ -34,7 +34,7 @@ export class PomodoroController {
 
   @Post('complete/:id')
   complete(@Param('id') id: string) {
-    return this.pomodoroService.completePomodoro(id);
+    return this.pomodoroService.complete(id);
   }
 
   @Delete(':id')

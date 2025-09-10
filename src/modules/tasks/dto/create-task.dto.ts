@@ -1,33 +1,32 @@
-import { IsEnum, IsNotEmpty, IsOptional} from 'class-validator';
-import {IsDateString, IsString, IsNumber} from 'class-validator';
-
-export enum TaskState {
-    COMPLETED="COMPLETED",
-    PENDING="PENDING",
-}
+import { IsEnum, IsNotEmpty, IsOptional, IsString, IsNumber, IsDateString } from 'class-validator';
+import { TaskState } from '../enums/task-state.enum';
 
 export class CreateTaskDto {
+  @IsNotEmpty()
+  @IsString()
+  title: string;
 
-    @IsNotEmpty()
-    title: string;
+  @IsOptional()
+  @IsString()
+  description?: string;
 
-    @IsOptional()
-    description: string;
+  @IsOptional()
+  @IsEnum(TaskState)
+  state?: TaskState; // default en schema
 
-    @IsOptional()
-    @IsEnum(TaskState)
-    state: TaskState;
+  @IsOptional()
+  @IsString()
+  notifyLocalTime?: string; // "HH:mm"
 
-    @IsOptional()
-    @IsString()
-    notifyLocalTime?: string; // formato "HH:mm"
+  @IsOptional()
+  @IsNumber()
+  dailyMinutes?: number;
 
-    @IsOptional()
-    @IsNumber()
-    dailyMinutes?: number;
+  @IsOptional()
+  @IsString()
+  timezone?: string;
 
-    @IsOptional()
-    @IsString()
-    timezone?: string; // ej: "America/Bogota"
-
+  @IsOptional()
+  @IsDateString()
+  dueDate: string;
 }

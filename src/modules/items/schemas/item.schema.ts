@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ItemType, quality } from "../dto/create-item.dto";
-import { HydratedDocument, Types } from "mongoose";
+import { HydratedDocument } from "mongoose";
 
 export type itemDocument = HydratedDocument<Item>;
 
@@ -10,7 +10,7 @@ export class Item {
     @Prop({ required: true })
     name: string;
 
-    @Prop({ required: true })
+    @Prop({ required: true, type: String })
     sprite_path: string;
 
     @Prop({ required: true })

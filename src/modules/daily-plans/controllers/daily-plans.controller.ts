@@ -1,45 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe } from '@nestjs/common';
 import { DailyPlansService } from '../services/daily-plans.service';
 import { CreateDailyPlanDto } from '../dto/create-daily-plan.dto';
 import { UpdateDailyPlanDto } from '../dto/update-daily-plan.dto';
 
 @Controller('daily-plans')
+@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
 export class DailyPlansController {
-  constructor(private readonly dailyPlansService: DailyPlansService) {}
+  constructor(private readonly service: DailyPlansService) {}
 
-  @Post('create/:userId/:taskId')
-  create(@Body() createDailyPlanDto: CreateDailyPlanDto, @Param('userId') userId: string, @Param('taskId') taskId: string) {
-    return this.dailyPlansService.create(createDailyPlanDto, userId, taskId);
+  @Post(':userId/:taskId')
+  create(
+    @Body() dto: CreateDailyPlanDto,
+    @Param('userId') userId: string,
+    @Param('taskId') taskId: string,
+  ) {
+    return this.service.create(dto, userId, taskId);
   }
 
-  @Get('getAll/:userId')
-  findAll(@Param('userId') userId: string) {
-    return this.dailyPlansService.findByUser(userId);
+  @Get('user/:userId')
+  findAllByUser(@Param('userId') userId: string) {
+    return this.service.findByUser(userId);
   }
 
-  @Get('findOne/:id')
+  @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.dailyPlansService.findOne(id);
+    return this.service.findOne(id);
   }
 
-  @Patch('update/:id')
-  update(@Param('id') id: string, @Body() updateDailyPlanDto: UpdateDailyPlanDto) {
-    return this.dailyPlansService.update(id, updateDailyPlanDto);
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: UpdateDailyPlanDto) {
+    return this.service.update(id, dto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.dailyPlansService.remove(id);
+    return this.service.remove(id);
   }
 
   @Get('reminder/:userId')
   reminder(@Param('userId') userId: string) {
-    return this.dailyPlansService.reminder(userId);
-  }
-
-  @Get('allUserPlans/:userId')
-  allUserPlans(@Param('userId') userId: string) {
-    return this.dailyPlansService.findByUser(userId);
-  
+    return this.service.reminder(userId);
   }
 }

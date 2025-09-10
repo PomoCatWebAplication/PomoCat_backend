@@ -1,58 +1,83 @@
-import { Injectable } from '@nestjs/common';
+// daily-plans.service.ts
+import { Injectable, BadRequestException, NotFoundException, Inject } from '@nestjs/common';
 import { CreateDailyPlanDto } from '../dto/create-daily-plan.dto';
 import { UpdateDailyPlanDto } from '../dto/update-daily-plan.dto';
-import { InjectModel } from '@nestjs/mongoose';
+import { DAILY_PLAN_REPO, type IDailyPlanRepository } from '../repository/daily-plans.repo.interface';
+
 
 @Injectable()
 export class DailyPlansService {
+  constructor(
+    @Inject(DAILY_PLAN_REPO) private readonly repo: IDailyPlanRepository,
+  ) {}
 
-  overlap(astartTime: string, aendTime: string, bstartTime: string, bendTime: string): boolean {
-    return (astartTime < bendTime) && (bstartTime < aendTime);
+  private parseIsoToDate(iso: string): Date {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) throw new BadRequestException('Invalid ISO date');
+    return d;
   }
 
-  readDayOfWeek(day: number): string {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    return days[day % 7];
-  }
+  async create(dto: CreateDailyPlanDto, userId: string, taskId: string) {
+    const start = this.parseIsoToDate(dto.startTime);
+    const end = this.parseIsoToDate(dto.endTime);
+    if (start >= end) throw new BadRequestException('startTime must be before endTime');
 
-  async reminder(userId: string) {
-    // Logic for sending reminders based on daily plans
-    const plans = await this.findByUser(userId);
-    plans.forEach(plan => {
-      // Send reminder for each plan
-      console.log(`Reminder for plan on day ${this.readDayOfWeek(plan.day)} from ${plan.startTime} to ${plan.endTime}`);
-    });
-  }
+    const overlap = await this.repo.overlapExists(userId, dto.day, start, end);
+    if (overlap) throw new BadRequestException('Time overlap with existing plan');
 
-  constructor(@InjectModel('DailyPlan') private dailyPlanModel) {}
-
-  async create(createDailyPlanDto: CreateDailyPlanDto, userId: string, taskId: string) {
-    for (let plan of await this.findByUser(userId)) {
-      if (this.overlap(plan.startTime, plan.endTime, createDailyPlanDto.startTime, createDailyPlanDto.endTime)) {
-        throw new Error('Time overlap with existing plan');
-      }
-    }
-    const createdDailyPlan = new this.dailyPlanModel({ ...createDailyPlanDto, userId, taskId });
-    return createdDailyPlan.save();
-  }
-
-  findAll() {
-    return this.dailyPlanModel.find().exec();
-  }
-
-  findOne(id: string) {
-    return this.dailyPlanModel.findById(id).exec();
-  }
-
-  update(id: string, updateDailyPlanDto: UpdateDailyPlanDto) {
-    return this.dailyPlanModel.findByIdAndUpdate(id, updateDailyPlanDto).exec();
-  }
-
-  remove(id: string) {
-    return this.dailyPlanModel.findByIdAndRemove(id).exec();
+    return this.repo.create(
+      { day: dto.day, startTime: start, endTime: end, note: dto.note },
+      userId,
+      taskId,
+    );
   }
 
   findByUser(userId: string) {
-    return this.dailyPlanModel.find({ userId: userId }).exec();
+    return this.repo.findAllByUser(userId);
+  }
+
+  findOne(id: string) {
+    return this.repo.findOne(id);
+  }
+
+  async update(id: string, dto: UpdateDailyPlanDto) {
+  const existing = await this.repo.findOne(id);
+  if (!existing) throw new NotFoundException('DailyPlan not found');
+
+  let start = existing.startTime;
+  let end   = existing.endTime;
+  let day   = existing.day;
+
+  if (dto.startTime) start = this.parseIsoToDate(dto.startTime);
+  if (dto.endTime)   end   = this.parseIsoToDate(dto.endTime);
+  if (dto.day !== undefined) day = dto.day;
+
+  if (start >= end) throw new BadRequestException('startTime must be before endTime');
+
+  const overlap = await this.repo.overlapExists(existing.userId as any, day, start, end);
+  if (overlap) throw new BadRequestException('Time overlap with existing plan');
+
+  return this.repo.update(id, {
+    day,
+    startTime: start,
+    endTime: end,
+    ...(dto.note !== undefined ? { note: dto.note } : {}),
+  });
+}
+
+  async remove(id: string) {
+    const removed = await this.repo.delete(id);
+    if (!removed) throw new NotFoundException('DailyPlan not found');
+    return removed;
+  }
+
+  async reminder(userId: string) {
+    await this.repo.reminder(userId);
+    return { status: 'ok' };
+  }
+
+  readDayOfWeek(day: number): string {
+    return this.repo.readDayOfWeek(day);
   }
 }
+

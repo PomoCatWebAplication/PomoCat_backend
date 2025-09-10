@@ -1,33 +1,37 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, Types } from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+import { User } from 'src/modules/auth/schemas/user.schema';
+import { Item } from 'src/modules/items/schemas/item.schema';
 
-export const defaultSkinPath = "../../../../public/sprites/pets/skin1.png";
-export const defaultBackgroundPath = "../../../../public/sprites/backgrounds/bg1.png";
+export const defaultSkinPath = 'public/sprites/pets/skin1.png';
+export const defaultBackgroundPath = 'public/sprites/backgrounds/bg1.png';
 
-export type petDocument = HydratedDocument<Pet>;
+export type PetDocument = HydratedDocument<Pet>;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'pets' })
 export class Pet {
-    @Prop({ required: true })
-    name: string;
+  _id: Types.ObjectId;
 
-    @Prop({ optional: true, type: Types.ObjectId, ref: 'Hat' })
-    hat: string;
+  @Prop({ required: true, trim: true, default: 'Cat' })
+  name: string;
 
-    @Prop({ optional: true, type: Types.ObjectId, ref: 'Shirt' })
-    shirt: string;
+  @Prop({ type: Types.ObjectId, ref: Item.name, required: false })
+  hat?: Types.ObjectId;
 
-    @Prop({ optional: true, type: Types.ObjectId, ref: 'Accesory' })
-    accesory: string;
+  @Prop({ type: Types.ObjectId, ref: Item.name, required: false })
+  shirt?: Types.ObjectId;
 
-    @Prop({ default: defaultSkinPath, required: true, type: Types.ObjectId, ref: 'Skin' })   
-    skin: string;
+  @Prop({ type: Types.ObjectId, ref: Item.name, required: false })
+  accessory?: Types.ObjectId;
 
-    @Prop({ default: defaultBackgroundPath, required: true, type: Types.ObjectId, ref: 'Background' })
-    background: string;
+  @Prop({ type: String, required: true, default: defaultSkinPath })
+  skin: string;
 
-    @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
-    userId: string;
+  @Prop({ type: String, required: true, default: defaultBackgroundPath })
+  background: string;
+
+  @Prop({ type: Types.ObjectId, ref: User.name, required: true })
+  userId: Types.ObjectId;
 }
 
 export const PetSchema = SchemaFactory.createForClass(Pet);

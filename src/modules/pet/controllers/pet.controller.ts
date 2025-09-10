@@ -8,10 +8,11 @@ import { PetService } from '../services/pet.service';
 export class PetController {
   constructor(private readonly petService: PetService) {}
 
-  @Post('new/:userId')
-  create(@Body() createPetDto: CreatePetDto, @Param('userId') userId: string) {
-    return this.petService.create(createPetDto, userId);
-  }
+ @Post('new/:userId')
+ create(@Body() dto: CreatePetDto, @Param('userId') userId: string) {
+  return this.petService.create(dto, userId);
+}
+
 
   @UseGuards(AuthGuard('jwt'))
   @Get()

@@ -1,14 +1,25 @@
 import { Module } from '@nestjs/common';
-import { InventoryService } from '../inventory/services/inventory.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { InventorySchema } from '../inventory/schemas/inventory.schema';
+import { InventoryModule } from '../inventory/inventory.module';
+import { ItemsModule } from '../items/items.module';
+import { AuthModule } from '../auth/auth.module';
 import { ShopController } from './controllers/shop.controller';
+import { ShopService } from './services/shop.service';
+import { SHOP_REPO } from './repository/shop.repo.interface';
+import { ShopRepository } from './repository/shop.repo';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Inventory', schema: InventorySchema }]),
+    InventoryModule, 
+    ItemsModule,     
+    AuthModule,      
   ],
   controllers: [ShopController],
-  providers: [InventoryService],
+  providers: [
+    ShopService,
+    { provide: SHOP_REPO, useClass: ShopRepository }, 
+  ],
+  exports: [ShopService],
 })
 export class ShopModule {}
+
+

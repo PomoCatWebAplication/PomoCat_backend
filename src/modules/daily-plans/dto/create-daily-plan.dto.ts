@@ -1,28 +1,18 @@
-import { IsDate, IsEnum, IsOptional, IsString } from "class-validator";
-
-export enum dayOfWeek {
-    SABADO = 0,
-    LUNES = 1,
-    MARTES = 2,
-    MIERCOLES = 3,
-    JUEVES = 4,
-    VIERNES = 5,
-    DOMINGO = 6
-}
+// create-daily-plan.dto.ts
+import { IsInt, Min, Max, IsISO8601, IsString, IsOptional } from 'class-validator';
 
 export class CreateDailyPlanDto {
+  @IsInt() @Min(0) @Max(6)
+  day: number;
 
-    @IsEnum(dayOfWeek)
-    day: dayOfWeek;
+  @IsISO8601()
+  @IsOptional()
+  startTime: string;
 
-    @IsDate()
-    startTime: string;
+  @IsISO8601()
+  endTime: string;
 
-    @IsDate()
-    endTime: string;
-
-    @IsOptional()
-    @IsString()
-    timezone: string;
-  userId: any;
+  @IsOptional() @IsString()
+  note?: string;
 }
+

@@ -13,6 +13,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { InventoryModule } from './modules/inventory/inventory.module';
 
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({isGlobal: true,}),

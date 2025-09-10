@@ -13,12 +13,15 @@ export enum UserRole {
 export class User {
 
   @Prop({ required: true })
+  _id?: string;
+
+  @Prop({ required: true })
   userName: string;
 
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true, select: true }) // para ocultar select false.
+  @Prop({ required: true, select: true })
   password: string;
 
   @Prop({ required: true, default: 0})

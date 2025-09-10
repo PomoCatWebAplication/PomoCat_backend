@@ -1,41 +1,42 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { CreateSettingDto } from '../dto/create-setting.dto';
-import { UpdateSettingDto } from '../dto/update-setting.dto';
-import { Settings } from '../schemas/settings.schema';
+import { Inject, Injectable } from "@nestjs/common";
+import { SETTINGS_REPO } from "../repository/settings.repo.interface";
+import type { ISettingsRepository } from "../repository/settings.repo.interface";
+import { CreateSettingDto } from "../dto/create-setting.dto";
+import { UpdateSettingDto } from "../dto/update-setting.dto";
 
 @Injectable()
 export class SettingsService {
   constructor(
-    @InjectModel(Settings.name) private settingsModel: Model<Settings>,
+    @Inject(SETTINGS_REPO) private readonly repo: ISettingsRepository,
   ) {}
 
-  async create(createSettingDto: CreateSettingDto, userId: string) {
-    const created = new this.settingsModel({ ...createSettingDto, userId });
-    await created.save();
-    return this.settingsModel.findById(created._id).exec();
+  async create(dto: CreateSettingDto, userId: string) {
+    const existing = await this.repo.findByUserId(userId);
+    if (existing) {
+      return this.repo.updateByUserId(userId, dto);
+    }
+    return this.repo.create(dto, userId);
   }
 
-  findAllSettings() {
-    return this.settingsModel.find().exec();
+  async findAllSettings() {
+    return this.repo.findAll();
   }
 
+  
   findAll(userId: string) {
-    return this.settingsModel.find({ userId }).exec();
+    return this.repo.findByUserId(userId); 
   }
 
-  findOne(id: string) {
-    return this.settingsModel.findOne({ _id: id }).exec();
+  async findOne(id: string) {
+    return this.repo.findById(id);
   }
 
-  update(id: string, updateSettingDto: UpdateSettingDto) {
-    return this.settingsModel
-      .findOneAndUpdate({ _id: id }, updateSettingDto, { new: true })
-      .exec();
+  async update(id: string, dto: UpdateSettingDto) {
+    // Si tu update es por userId, mejor cambia el controller:
+    return this.repo.updateById(id, dto);
   }
 
-  remove(id: string) {
-    return this.settingsModel.findOneAndDelete({ _id: id }).exec();
+  async remove(id: string) {
+    return this.repo.deleteById(id);
   }
 }

@@ -1,60 +1,45 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { isValidObjectId, Model, Types } from 'mongoose';
-import { CreatePomodoroDto } from '../dto/create-pomodoro.dto';
-import { UpdatePomodoroDto } from '../dto/update-pomodoro.dto';
-import { PomodoroSession, PomodoroSessionDocument } from '../schemas/pomodoro.schema';
+import { Inject } from '@nestjs/common';
+import { POMODORO_SESSION_REPO, type IPomodoroSessionRepository } from '../repository/session.repo.interface';
 
 
 @Injectable()
 export class PomodoroService {
 
-  constructor(@InjectModel(PomodoroSession.name) private pomodoroModel: Model<PomodoroSessionDocument>) {}
+  constructor(@Inject(POMODORO_SESSION_REPO) private readonly repo: IPomodoroSessionRepository) {}
 
-  ensureUserExists(userId: string) {
-    if(!isValidObjectId(userId)) {
-      throw new BadRequestException('Invalid ID');
+  async create(dto: Partial<any>, userId: string, taskId: string) {
+    if (!userId) {
+      throw new BadRequestException('User ID is required');
     }
-  }
-
-  async createPomodoroSession(dto: CreatePomodoroDto) {
-    const doc = new this.pomodoroModel({
-      ...dto,
-      taskId: new Types.ObjectId(dto.taskId),
-      userId: new Types.ObjectId(dto.userId),
-    });
-    return doc.save();
-  }
-
-  async completePomodoro(id: string) {
-    this.ensureUserExists(id);
-    return this.pomodoroModel.findByIdAndUpdate(id, { completed: true, endTime: new Date() }, { new: true }).exec();
-  }
-
-  findAll() {
-    return this.pomodoroModel.find().exec();
-  }
-
-  findAllByUser(userId: string) {
-    return this.pomodoroModel.find({ userId: new Types.ObjectId(userId) }).sort({ startTime: -1 }).exec();
-  }
-
-  findOne(id: string) {
-    return this.pomodoroModel.findById(id).exec();
-  }
-
-  update(id: string, dto: UpdatePomodoroDto) {
-    const patch: any = { ...dto };
-    if (dto.taskId) {
-      patch.taskId = new Types.ObjectId(dto.taskId);
+    if (!taskId) {
+      throw new BadRequestException('Task ID is required');
     }
-    if (dto.userId) {
-      patch.userId = new Types.ObjectId(dto.userId);
-    }
-    return this.pomodoroModel.findByIdAndUpdate(id, { $set: patch }, { new: true }).exec();
+    return this.repo.create(dto, userId, taskId);
   }
 
-  remove(id: string) {
-    return this.pomodoroModel.findByIdAndDelete(id).exec();
+  async findAll() {
+    return this.repo.findAll();
+  }
+
+
+  async findAllByUser(userId: string) {
+    return this.repo.findAllByUser(userId);
+  }
+
+  async findOne(id: string) {
+    return this.repo.findOne(id);
+  }
+
+  async update(id: string, dto: Partial<any>) {
+    return this.repo.update(id, dto);
+  }
+
+  async remove(id: string) {
+    return this.repo.delete(id);
+  }
+
+  async complete(id: string) {
+    return this.repo.completePomodoro(id);
   }
 }

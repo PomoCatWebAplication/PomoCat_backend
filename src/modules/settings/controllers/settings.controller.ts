@@ -1,5 +1,4 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-
 import { CreateSettingDto } from '../dto/create-setting.dto';
 import { UpdateSettingDto } from '../dto/update-setting.dto';
 import { SettingsService } from '../services/settings.service';
@@ -8,9 +7,9 @@ import { SettingsService } from '../services/settings.service';
 export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
 
-  @Post(':user/:userId')
-  create(@Body() createSettingDto: CreateSettingDto, @Param('userId') userId: string) {
-    return this.settingsService.create(createSettingDto, userId);
+  @Post('user/:userId')
+  create(@Body() dto: CreateSettingDto, @Param('userId') userId: string) {
+    return this.settingsService.create(dto, userId);
   }
 
   @Get()
@@ -19,22 +18,17 @@ export class SettingsController {
   }
 
   @Get('user/:userId')
-  findAll(@Param('userId') userId: string) {
+  findByUser(@Param('userId') userId: string) {
     return this.settingsService.findAll(userId);
   }
 
-  @Get('id/:id')
-  findOne(@Param('id') id: string) {
-    return this.settingsService.findOne(id);
+  @Patch('user/:userId')
+  updateByUser(@Param('userId') userId: string, @Body() dto: UpdateSettingDto) {
+    return this.settingsService['repo'].updateByUserId(userId, dto); 
   }
 
-  @Patch('id/:id')
-  update(@Param('id') id: string, @Body() updateSettingDto: UpdateSettingDto) {
-    return this.settingsService.update(id, updateSettingDto);
-  }
-
-  @Delete('id/:id')
-  remove(@Param('id') id: string) {
-    return this.settingsService.remove(id);
+  @Delete('user/:userId')
+  deleteByUser(@Param('userId') userId: string) {
+    return this.settingsService['repo'].deleteByUserId(userId);
   }
 }

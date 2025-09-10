@@ -1,63 +1,62 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ForbiddenException, Request, HttpCode, HttpStatus } from '@nestjs/common';
-import { UserRole } from '../schemas/user.schema';
-import { AuthGuard } from '@nestjs/passport'
-import { UseGuards } from '@nestjs/common';
+// auth/controllers/auth.controller.ts
+import { 
+  Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards 
+} from '@nestjs/common';
+import { AuthService } from '../services/auth.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { LoginUserDto } from '../dto/login-user.dto';
-import { AuthService } from '../services/auth.service';
+import { UserRole } from '../schemas/user.schema';
+import { Roles } from 'src/modules/shared/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/modules/shared/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/modules/shared/guards/roles.guard';
 
-@Controller('jwt')
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
- 
-  // Register a new admin user (only if the requester is an admin)
-  @HttpCode(HttpStatus.CREATED)
-  @UseGuards(AuthGuard('jwt'))
-  @Post('registerAdmin')
-  registerAdmin(@Body() body: CreateUserDto, @Request() req) {
-    const user = req.user;
-    if (user.role !== UserRole.ADMIN) {
-      throw new ForbiddenException('Only admins can register new admin users');
-    }
-    return this.authService.createUserAsAdmin(body);
-  }
 
- /*
-  @Post('registerAdmin')
+  // Admin crea admin
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.CREATED)
+  @Post('register-admin')
   registerAdmin(@Body() body: CreateUserDto) {
+    // Si quieres autologin al registrarse, puedes generar token aquí.
     return this.authService.createUserAsAdmin(body);
   }
-  */
 
+  // Registro público usuario regular
   @HttpCode(HttpStatus.CREATED)
-  @Post('registerUser')
+  @Post('register')
   registerUser(@Body() body: CreateUserDto) {
     return this.authService.createUserAsRegular(body);
   }
 
-  // Change user role but only if the user is an admin
-  @UseGuards(AuthGuard('jwt'))
-  @Patch('changeRole/:id')
+  // Cambiar rol (solo admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @Patch('change-role/:id')
   changeRole(@Param('id') userId: string, @Body() body: { role: UserRole }) {
     return this.authService.changeUserRole(userId, body.role);
   }
 
-
+  // Listar usuarios (solo admin)
   @Get('users')
   findAllUsers() {
     return this.authService.getAllUsers();
   }
 
-  @Get('user/:id')
+  // Ver un usuario (admin o podrías permitir al propio usuario)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @Get('users/:id')
   findUserById(@Param('id') userId: string) {
     return this.authService.getUserById(userId);
   }
 
+  // Login
   @HttpCode(HttpStatus.OK)
   @Post('login')
   login(@Body() body: LoginUserDto) {
     return this.authService.login(body);
   }
-
 }
-

@@ -42,6 +42,12 @@ export class User {
     _id: false,
   })
   pushProviders?: PushProviders;
+
+  @Prop({ required: true, default: 0 })
+  streak: number;
+
+  @Prop({ required: false, type: Date })
+  lastCompletedDate?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

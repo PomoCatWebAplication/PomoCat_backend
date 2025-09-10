@@ -6,6 +6,7 @@ import { User, UserSchema } from './schemas/user.schema';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './services/auth.service';
+import { UsersController } from './users.controller';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
@@ -15,7 +16,7 @@ import { AuthService } from './services/auth.service';
     signOptions: { expiresIn: '1h' },
   }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, UsersController],
   providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

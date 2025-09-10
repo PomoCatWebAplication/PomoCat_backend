@@ -6,7 +6,7 @@ export type SettingsDocument = HydratedDocument<Settings>;
 
 @Schema({ timestamps: true })
 export class Settings {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true }) // 👈 quitamos el index: true
   userId: Types.ObjectId;
 
   @Prop({ type: Number, min: 0, max: 100, default: 50 })
@@ -20,5 +20,6 @@ export class Settings {
 }
 
 export const SettingsSchema = SchemaFactory.createForClass(Settings);
+
 
 SettingsSchema.index({ userId: 1 }, { unique: true });

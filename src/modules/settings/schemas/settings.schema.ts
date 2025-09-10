@@ -6,7 +6,7 @@ export type SettingsDocument = HydratedDocument<Settings>;
 
 @Schema({ timestamps: true })
 export class Settings {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true }) // 👈 quitamos el index: true
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   userId: Types.ObjectId;
 
   @Prop({ type: Number, min: 0, max: 100, default: 50 })

@@ -78,14 +78,12 @@ export class TasksService {
     return this.taskRepository.findOneAndDelete(id);
   }
 
-  // Cron SIN parámetros (el scheduler no llama con argumentos)
   @Cron(CronExpression.EVERY_MINUTE)
   async scanReminders() {
     // Aquí podrías: listar usuarios y, por cada uno, llamar getRemindersForUser(userId)
     this.logger.debug('Escaneando recordatorios…');
   }
 
-  // Método utilitario que puedes usar desde tu controller/cron
   async getRemindersForUser(userId: string) {
     const now = new Date();
     const in5Min = new Date(now.getTime() + 5 * 60 * 1000);

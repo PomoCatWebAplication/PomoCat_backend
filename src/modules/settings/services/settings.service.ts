@@ -32,7 +32,6 @@ export class SettingsService {
   }
 
   async update(id: string, dto: UpdateSettingDto) {
-    // Si tu update es por userId, mejor cambia el controller:
     return this.repo.updateById(id, dto);
   }
 

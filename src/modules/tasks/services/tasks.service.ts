@@ -80,7 +80,7 @@ export class TasksService {
 
   @Cron(CronExpression.EVERY_MINUTE)
   async scanReminders() {
-    // Aquí podrías: listar usuarios y, por cada uno, llamar getRemindersForUser(userId)
+    // se podría: listar usuarios y, por cada uno, llamar getRemindersForUser(userId)
     this.logger.debug('Escaneando recordatorios…');
   }
 

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 import type { PushProviders } from "../types/push-providers.type";
 
 export type UserDocument = HydratedDocument<User>;
@@ -12,8 +12,6 @@ export enum UserRole {
 @Schema()
 export class User {
 
-  @Prop({ required: true })
-  _id?: string;
 
   @Prop({ required: true })
   userName: string;
@@ -24,10 +22,10 @@ export class User {
   @Prop({ required: true, select: true })
   password: string;
 
-  @Prop({ required: true, default: 0})
+  @Prop({ default: 0})
   coins: number;
 
-  @Prop({ required: true, enum: UserRole, default: UserRole.USER })
+  @Prop({ enum: Object.values(UserRole), default: UserRole.USER })
   role: UserRole;
 
   @Prop({
@@ -54,10 +52,17 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-  UserSchema.set('toJSON', {
-    transform(_doc, ret) {
-      delete (ret as any).password;
-      delete (ret as any).__v;
-      return ret;
-    },
-  });
+
+UserSchema.virtual("id").get(function (this: any) {
+  return this._id?.toString();
+});
+
+
+UserSchema.set("toJSON", {
+  virtuals: true, 
+  transform(_doc, ret) {
+    delete (ret as any).password;
+    delete (ret as any).__v;
+    return ret;
+  },
+});

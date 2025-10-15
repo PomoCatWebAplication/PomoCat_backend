@@ -1,10 +1,6 @@
 import { IsMongoId, IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 export class CreatePetDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
   @IsOptional()
   @IsMongoId()
   hat?: string;

@@ -25,19 +25,33 @@ export class AuthRepository implements IAuthRepository {
     return sanitized;
   }
 
-  async createUserAsAdmin(dto: CreateUserDto): Promise<Partial<User>> {
-    const hashed = await this.hashPassword(dto.password);
-    const user = new this.userModel({ ...dto, password: hashed, role: "admin" });
-    await user.save();
-    return this.sanitize(user);
-  }
+async createUserAsAdmin(dto: CreateUserDto): Promise<Partial<User>> {
+  const hashed = await this.hashPassword(dto.password);
+  const { _id, id, ...clean } = dto as any;
+  const normalizedEmail = clean.email.trim().toLowerCase();
 
-  async createUserAsRegular(dto: CreateUserDto): Promise<Partial<User>> {
-    const hashed = await this.hashPassword(dto.password);
-    const user = new this.userModel({ ...dto, password: hashed, role: "user" });
-    await user.save();
-    return this.sanitize(user);
-  }
+  const created = await this.userModel.create({
+    ...clean,
+    email: normalizedEmail,
+    password: hashed,
+    role: "admin",
+  });
+  return this.sanitize(created);
+}
+
+async createUserAsRegular(dto: CreateUserDto): Promise<Partial<User>> {
+  const hashed = await this.hashPassword(dto.password);
+  const { _id, id, ...clean } = dto as any;
+  const normalizedEmail = clean.email.trim().toLowerCase();
+
+  const created = await this.userModel.create({
+    ...clean,
+    email: normalizedEmail,
+    password: hashed,
+    role: "user",
+  });
+  return this.sanitize(created);
+}
 
   async changeRole(userId: string, newRole: User["role"]): Promise<Partial<User> | null> {
     const user = await this.userModel.findById(userId);

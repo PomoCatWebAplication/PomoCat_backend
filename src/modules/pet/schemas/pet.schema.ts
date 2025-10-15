@@ -12,9 +12,6 @@ export type PetDocument = HydratedDocument<Pet>;
 export class Pet {
   _id: Types.ObjectId;
 
-  @Prop({ required: true, trim: true, default: 'Cat' })
-  name: string;
-
   @Prop({ type: Types.ObjectId, ref: Item.name, required: false })
   hat?: Types.ObjectId;
 

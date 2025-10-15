@@ -18,7 +18,6 @@ export class PetService {
     const oid = (v?: string) => (v ? new Types.ObjectId(v) : undefined);
 
     const payload: Partial<Pet> = {
-      name: dto.name,
       hat: oid(dto.hat),
       shirt: oid(dto.shirt),
       accessory: oid(dto.accessory),
@@ -30,7 +29,6 @@ export class PetService {
 
   async update(id: string, dto: UpdatePetDto) {
     const update: Partial<Pet> = {};
-    if (dto.name !== undefined) update.name = dto.name;
     if (dto.hat !== undefined) update.hat = dto.hat ? new Types.ObjectId(dto.hat) : undefined;
     if (dto.shirt !== undefined) update.shirt = dto.shirt ? new Types.ObjectId(dto.shirt) : undefined;
     if (dto.accessory !== undefined) update.accessory = dto.accessory ? new Types.ObjectId(dto.accessory) : undefined;

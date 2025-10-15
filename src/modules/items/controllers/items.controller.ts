@@ -8,13 +8,12 @@ import { ItemsService } from '../services/items.service';
 export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
 
-  @UseGuards(AuthGuard('jwt'))
-  @Post()
+  @Post('create')
   create(@Body() createItemDto: CreateItemDto) {
     return this.itemsService.create(createItemDto);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.itemsService.findAll();
   }

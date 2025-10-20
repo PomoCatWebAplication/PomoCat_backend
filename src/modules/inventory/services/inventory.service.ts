@@ -18,7 +18,13 @@ export class InventoryService {
   findAll() { return this.repo.findAll(); }
 
   async findOne(id: string) {
-    const doc = await this.repo.findOne(id);
+    const doc = await this.repo.findByOne(id);
+    if (!doc) throw new NotFoundException('Inventory not found');
+    return doc;
+  }
+
+  async findByUserIdAndItemId(userId: string, itemId: string) {
+    const doc = await this.repo.findByUserIdAndItemId(userId, itemId);
     if (!doc) throw new NotFoundException('Inventory not found');
     return doc;
   }

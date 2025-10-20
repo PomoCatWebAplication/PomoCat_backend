@@ -89,7 +89,7 @@ async createUserAsRegular(dto: CreateUserDto): Promise<Partial<User>> {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return null;
 
-    const payload = { email: normalized, sub: user._id, role: user.role };
+    const payload = { email: normalized, sub: user._id.toString(), role: user.role };
     const access_token = this.jwtService.sign(payload);
     return { user: this.sanitize(user), access_token };
     }

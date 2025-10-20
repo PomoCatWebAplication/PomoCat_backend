@@ -1,25 +1,26 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreatePetDto } from './create-pet.dto';
-import { IsString, IsNotEmpty, IsMongoId } from 'class-validator';
+import { IsMongoId, IsOptional, IsString } from 'class-validator';
 
 export class UpdatePetDto extends PartialType(CreatePetDto) {
 
-    @IsString()
-    @IsNotEmpty()
-    name?: string;
-
     @IsMongoId()
+    @IsOptional()
     hat?: string;
 
     @IsMongoId()
+    @IsOptional()
     shirt?: string;
 
     @IsMongoId()
-    accesory?: string;
+    @IsOptional()
+    accessory?: string;
 
-    @IsMongoId()
+    @IsString()
+    @IsOptional()
     skin?: string;
 
-    @IsMongoId()
+    @IsString()
+    @IsOptional()
     background?: string;
 }

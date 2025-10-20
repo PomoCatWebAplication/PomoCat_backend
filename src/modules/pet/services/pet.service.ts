@@ -32,8 +32,11 @@ export class PetService {
     if (dto.hat !== undefined) update.hat = dto.hat ? new Types.ObjectId(dto.hat) : undefined;
     if (dto.shirt !== undefined) update.shirt = dto.shirt ? new Types.ObjectId(dto.shirt) : undefined;
     if (dto.accessory !== undefined) update.accessory = dto.accessory ? new Types.ObjectId(dto.accessory) : undefined;
+    if (dto.skin !== undefined)       update.skin       = dto.skin;
+    if (dto.background !== undefined) update.background = dto.background;
 
-    return this.repo.update(id, update as any);
+
+    return this.repo.updateByUserId(id, update as any);
   }
 
   async findAll() {

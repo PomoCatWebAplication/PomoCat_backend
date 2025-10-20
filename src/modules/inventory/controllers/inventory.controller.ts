@@ -16,6 +16,11 @@ export class InventoryController {
     return this.inventoryService.findOne(id);
   }
 
+  @Get('user/:userId/item/:itemId')
+  findByUserIdAndItemId(@Param('userId') userId: string, @Param('itemId') itemId: string) {
+    return this.inventoryService.findByUserIdAndItemId(userId, itemId);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateInventoryDto: UpdateInventoryDto) {
     return this.inventoryService.update(id, updateInventoryDto);

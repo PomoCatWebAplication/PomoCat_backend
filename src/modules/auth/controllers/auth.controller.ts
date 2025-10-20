@@ -20,18 +20,15 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @Post('register-admin')
   registerAdmin(@Body() body: CreateUserDto) {
-    // Si quieres autologin al registrarse, puedes generar token aquí.
     return this.authService.createUserAsAdmin(body);
   }
 
-  // Registro público usuario regular
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
   registerUser(@Body() body: CreateUserDto) {
     return this.authService.createUserAsRegular(body);
   }
 
-  // Cambiar rol (solo admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @Patch('change-role/:id')
@@ -39,15 +36,13 @@ export class AuthController {
     return this.authService.changeUserRole(userId, body.role);
   }
 
-  // Listar usuarios (solo admin)
+  //@UseGuards(JwtAuthGuard, RolesGuard)
+  //@Roles(UserRole.ADMIN)
   @Get('users')
   findAllUsers() {
     return this.authService.getAllUsers();
   }
 
-  // Ver un usuario (admin o podrías permitir al propio usuario)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
   @Get('users/:id')
   findUserById(@Param('id') userId: string) {
     return this.authService.getUserById(userId);

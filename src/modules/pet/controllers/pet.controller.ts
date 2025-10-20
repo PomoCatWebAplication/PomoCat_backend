@@ -13,7 +13,6 @@ export class PetController {
   return this.petService.create(dto, userId);
 }
 
-
   @UseGuards(AuthGuard('jwt'))
   @Get()
   findAll() {
@@ -26,9 +25,9 @@ export class PetController {
   }
 
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePetDto: UpdatePetDto) {
-    return this.petService.update(id, updatePetDto);
+  @Patch(':userId')
+  updateMyPet(@Param('userId') userId: string, @Body() body: UpdatePetDto) {
+    return this.petService.update(userId, body);
   }
 
   @UseGuards(AuthGuard('jwt'))

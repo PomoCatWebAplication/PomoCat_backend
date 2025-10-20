@@ -1,8 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, UpdateQuery, Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Pet, PetDocument } from '../schemas/pet.schema';
 import { IPetRepository } from './pet.repo.interface';
+import { BadRequestException } from '@nestjs/common';
+
+const OID = (id: unknown) => {
+  if (typeof id !== 'string' || !Types.ObjectId.isValid(id)) {
+    throw new BadRequestException('Invalid ObjectId');
+  }
+  return Types.ObjectId.createFromHexString(id);
+};
 
 @Injectable()
 export class PetRepository implements IPetRepository {
@@ -20,12 +28,30 @@ export class PetRepository implements IPetRepository {
     return this.petModel.find().exec();
   }
 
-  async findById(id: string): Promise<PetDocument | null> {
-    return this.petModel.findById(id).exec();
+  async findById(userId: string): Promise<PetDocument | null> {
+    if (!Types.ObjectId.isValid(userId)) return null;
+    const filter = { userId: new Types.ObjectId(userId) };
+    return this.petModel.findOne(filter).lean().exec();
   }
 
-  async update(id: string, pet: UpdateQuery<Pet>): Promise<PetDocument | null> {
-    return this.petModel.findByIdAndUpdate(id, pet, { new: true }).exec();
+  async updateByUserId(userId: string, patch: Partial<Pet>) {
+    const update: any = { ...patch };
+
+    if (typeof update.hat === 'string') {
+      update.hat = OID(update.hat);
+    }
+    if (typeof update.shirt === 'string') {
+      update.shirt = OID(update.shirt);
+    }
+    if (typeof update.accessory === 'string') {
+      update.accessory = OID(update.accessory);
+    }
+
+    return this.petModel.findOneAndUpdate(
+      { userId: OID(userId) },
+      { $set: update },
+      { new: true }
+    ).exec();
   }
 
   async delete(id: string): Promise<PetDocument | null> {

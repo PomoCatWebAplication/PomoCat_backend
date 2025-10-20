@@ -1,36 +1,42 @@
-import { IInventoryRepository } from "./inventory.repository.interface";
-import { Inject, Injectable } from "@nestjs/common";
-import { CreateInventoryDto } from "../dto/create-inventory.dto";
-import { UpdateInventoryDto } from "../dto/update-inventory.dto";
-import { Inventory, InventoryDocument } from "../schemas/inventory.schema";
-import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
+import { Model, Types, UpdateQuery, FilterQuery } from "mongoose";
+import { Inventory, InventoryDocument } from "../schemas/inventory.schema";
+import { IInventoryRepository } from "./inventory.repository.interface";
+import { CreateInventoryDto } from "../dto/create-inventory.dto";
 
-@Injectable()
 export class InventoryRepository implements IInventoryRepository {
   constructor(
-    @InjectModel(Inventory.name) private inventoryModel: Model<InventoryDocument>,
+    @InjectModel(Inventory.name)
+    private readonly inventoryModel: Model<InventoryDocument>,
   ) {}
 
-  async create(createInventoryDto: CreateInventoryDto) {
-    const createdInventory = new this.inventoryModel(createInventoryDto);
-    return createdInventory.save();
+  create(dto: CreateInventoryDto): Promise<InventoryDocument> {
+    const payload = {
+      userId: new Types.ObjectId(dto.userId),
+      itemId: new Types.ObjectId(dto.itemId),
+      equiped: dto.equiped ?? false,
+      locked: dto.locked ?? false,
+    };
+    return this.inventoryModel.create(payload);
   }
 
-  async findAll() {
-    return this.inventoryModel.find().exec();
+  findAll(filter: FilterQuery<Inventory> = {}) {
+    return this.inventoryModel.find(filter).exec();
   }
 
-  async findOne(id: string) {
+  findByOne(id: string) {
     return this.inventoryModel.findById(id).exec();
   }
 
-  async update(id: string, updateInventory: UpdateInventoryDto) {
-    return this.inventoryModel.findByIdAndUpdate(id, updateInventory, { new: true }).exec();
+  findByUserIdAndItemId(userId: string, itemId: string) {
+  return this.inventoryModel.findOne({ userId, itemId }).lean().exec();
+}
+
+  update(id: string, update: UpdateQuery<Inventory>) {
+    return this.inventoryModel.findByIdAndUpdate(id, update, { new: true }).exec();
   }
 
-    async remove(id: string) {
+  remove(id: string) {
     return this.inventoryModel.findByIdAndDelete(id).exec();
   }
-
 }

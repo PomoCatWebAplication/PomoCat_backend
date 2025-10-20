@@ -24,6 +24,18 @@ export class Item {
 
     @Prop({ required: true, default: true })
     isValid: boolean;
+
+    @Prop({ required: false })
+    posX: number;
+
+    @Prop({ required: false })
+    posY: number;
+
+    @Prop({ required: false })
+    width: number;
+
+    @Prop({ required: false })
+    height: number;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

@@ -49,4 +49,8 @@ export class AuthService {
     if (!res) throw new UnauthorizedException("Invalid email or password");
     return res;
   }
+
+  async sumCoins(userId: string, coins: number) {
+    return this.authRepository.sumCoins(userId, coins);
+  }
 }

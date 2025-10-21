@@ -54,4 +54,10 @@ export class AuthController {
   login(@Body() body: LoginUserDto) {
     return this.authService.login(body);
   }
+
+  
+  @Patch('sum-coins/:id')
+  sumCoins(@Param('id') userId: string, @Body() body: { coins: number }) {
+    return this.authService.sumCoins(userId, body.coins);
+  }
 }

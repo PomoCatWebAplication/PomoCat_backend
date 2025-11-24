@@ -18,17 +18,18 @@ export class TasksController {
     return this.tasksService.findAllTasks();
   }
 
-  // Obtener todas las tareas de un usuario
-  @Get(':userId')
+  // ✅ Todas las tareas de un usuario
+  @Get('user/:userId')
   findAll(@Param('userId') userId: string) {
     return this.tasksService.findAllByUser(userId);
   }
 
-  // Obtener una tarea específica
-  @Get(':id')
+  // ✅ Obtener una tarea específica
+  @Get('task/:id')
   findOne(@Param('id') id: string) {
     return this.tasksService.findOne(id);
   }
+
 
   // Actualizar una tarea específica
   @Patch(':id')
